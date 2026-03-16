@@ -1,0 +1,1742 @@
+{
+  "teachers": [
+    {
+      "id": "t1",
+      "name": "Dr. Alice Chen",
+      "department": "CS",
+      "subjects_can_teach": [
+        "programming",
+        "algorithms",
+        "databases"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 6,
+      "max_hours_week": 20,
+      "preferred_days_off": [
+        4
+      ],
+      "preferred_time_slots": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "t2",
+      "name": "Dr. Bob Kumar",
+      "department": "CS",
+      "subjects_can_teach": [
+        "programming",
+        "networks",
+        "databases"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 4,
+      "max_hours_week": 12,
+      "preferred_days_off": [],
+      "preferred_time_slots": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "t3",
+      "name": "Dr. Carol Zhang",
+      "department": "CS",
+      "subjects_can_teach": [
+        "algorithms",
+        "networks",
+        "programming"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 6,
+      "max_hours_week": 20,
+      "preferred_days_off": [],
+      "preferred_time_slots": [
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "id": "t4",
+      "name": "Dr. Dan Rivera",
+      "department": "CS",
+      "subjects_can_teach": [
+        "databases",
+        "networks",
+        "algorithms"
+      ],
+      "availability": {
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 4,
+      "max_hours_week": 12,
+      "preferred_days_off": [],
+      "preferred_time_slots": []
+    },
+    {
+      "id": "t5",
+      "name": "Dr. Eva Petrov",
+      "department": "Math",
+      "subjects_can_teach": [
+        "calculus",
+        "linear_algebra",
+        "statistics"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 6,
+      "max_hours_week": 20,
+      "preferred_days_off": [
+        4
+      ],
+      "preferred_time_slots": []
+    },
+    {
+      "id": "t6",
+      "name": "Dr. Frank Osei",
+      "department": "Math",
+      "subjects_can_teach": [
+        "calculus",
+        "discrete_math",
+        "statistics"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 4,
+      "max_hours_week": 12,
+      "preferred_days_off": [],
+      "preferred_time_slots": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "t7",
+      "name": "Dr. Grace Tanaka",
+      "department": "Math",
+      "subjects_can_teach": [
+        "linear_algebra",
+        "discrete_math",
+        "calculus"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 6,
+      "max_hours_week": 20,
+      "preferred_days_off": [],
+      "preferred_time_slots": []
+    },
+    {
+      "id": "t8",
+      "name": "Dr. Hector Morales",
+      "department": "Math",
+      "subjects_can_teach": [
+        "statistics",
+        "linear_algebra",
+        "discrete_math"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 6,
+      "max_hours_week": 20,
+      "preferred_days_off": [],
+      "preferred_time_slots": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "t9",
+      "name": "Dr. Irene Volkov",
+      "department": "Physics",
+      "subjects_can_teach": [
+        "mechanics",
+        "electromagnetics",
+        "thermodynamics"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 6,
+      "max_hours_week": 20,
+      "preferred_days_off": [
+        4
+      ],
+      "preferred_time_slots": []
+    },
+    {
+      "id": "t10",
+      "name": "Dr. James Park",
+      "department": "Physics",
+      "subjects_can_teach": [
+        "mechanics",
+        "optics",
+        "thermodynamics"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 4,
+      "max_hours_week": 12,
+      "preferred_days_off": [],
+      "preferred_time_slots": []
+    },
+    {
+      "id": "t11",
+      "name": "Dr. Kira Johansson",
+      "department": "Physics",
+      "subjects_can_teach": [
+        "electromagnetics",
+        "optics",
+        "mechanics"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 6,
+      "max_hours_week": 20,
+      "preferred_days_off": [],
+      "preferred_time_slots": []
+    },
+    {
+      "id": "t12",
+      "name": "Dr. Leo Nguyen",
+      "department": "Physics",
+      "subjects_can_teach": [
+        "thermodynamics",
+        "optics",
+        "electromagnetics"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 6,
+      "max_hours_week": 20,
+      "preferred_days_off": [],
+      "preferred_time_slots": [
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "id": "t13",
+      "name": "Dr. Maria Santos",
+      "department": "Languages",
+      "subjects_can_teach": [
+        "english",
+        "academic_writing",
+        "communication"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 6,
+      "max_hours_week": 20,
+      "preferred_days_off": [
+        4
+      ],
+      "preferred_time_slots": []
+    },
+    {
+      "id": "t14",
+      "name": "Dr. Nils Eriksson",
+      "department": "Languages",
+      "subjects_can_teach": [
+        "english",
+        "communication"
+      ],
+      "availability": {
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 4,
+      "max_hours_week": 12,
+      "preferred_days_off": [],
+      "preferred_time_slots": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "t15",
+      "name": "Dr. Olivia Brown",
+      "department": "Languages",
+      "subjects_can_teach": [
+        "academic_writing",
+        "communication",
+        "english"
+      ],
+      "availability": {
+        "0": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "1": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "2": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "3": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "4": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "max_hours_day": 6,
+      "max_hours_week": 20,
+      "preferred_days_off": [],
+      "preferred_time_slots": []
+    }
+  ],
+  "courses": [
+    {
+      "id": "c1",
+      "name": "Intro to Programming",
+      "subject": "programming",
+      "department": "CS",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg1",
+      "eligible_teacher_ids": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c2",
+      "name": "Programming Lab",
+      "subject": "programming",
+      "department": "CS",
+      "sessions_per_week": 1,
+      "session_duration_slots": 2,
+      "required_room_type": "computer_lab",
+      "student_group_id": "sg1",
+      "eligible_teacher_ids": [
+        "t1",
+        "t2"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c3",
+      "name": "Algorithms",
+      "subject": "algorithms",
+      "department": "CS",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg2",
+      "eligible_teacher_ids": [
+        "t1",
+        "t3",
+        "t4"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c4",
+      "name": "Database Systems",
+      "subject": "databases",
+      "department": "CS",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg2",
+      "eligible_teacher_ids": [
+        "t1",
+        "t2",
+        "t4"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c5",
+      "name": "Database Lab",
+      "subject": "databases",
+      "department": "CS",
+      "sessions_per_week": 1,
+      "session_duration_slots": 2,
+      "required_room_type": "computer_lab",
+      "student_group_id": "sg2",
+      "eligible_teacher_ids": [
+        "t2",
+        "t4"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c6",
+      "name": "Computer Networks",
+      "subject": "networks",
+      "department": "CS",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg1",
+      "eligible_teacher_ids": [
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c7",
+      "name": "Networks Lab",
+      "subject": "networks",
+      "department": "CS",
+      "sessions_per_week": 1,
+      "session_duration_slots": 2,
+      "required_room_type": "computer_lab",
+      "student_group_id": "sg1",
+      "eligible_teacher_ids": [
+        "t3",
+        "t4"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c8",
+      "name": "Advanced Algorithms",
+      "subject": "algorithms",
+      "department": "CS",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg2",
+      "eligible_teacher_ids": [
+        "t1",
+        "t3"
+      ],
+      "is_fixed": true,
+      "fixed_day": 0,
+      "fixed_period": 0
+    },
+    {
+      "id": "c9",
+      "name": "Calculus I",
+      "subject": "calculus",
+      "department": "Math",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg3",
+      "eligible_teacher_ids": [
+        "t5",
+        "t6",
+        "t7"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c10",
+      "name": "Calculus II",
+      "subject": "calculus",
+      "department": "Math",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg4",
+      "eligible_teacher_ids": [
+        "t5",
+        "t6"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c11",
+      "name": "Linear Algebra",
+      "subject": "linear_algebra",
+      "department": "Math",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg3",
+      "eligible_teacher_ids": [
+        "t5",
+        "t7",
+        "t8"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c12",
+      "name": "Statistics",
+      "subject": "statistics",
+      "department": "Math",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg4",
+      "eligible_teacher_ids": [
+        "t5",
+        "t6",
+        "t8"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c13",
+      "name": "Discrete Math",
+      "subject": "discrete_math",
+      "department": "Math",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg3",
+      "eligible_teacher_ids": [
+        "t6",
+        "t7",
+        "t8"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c14",
+      "name": "Statistics Lab",
+      "subject": "statistics",
+      "department": "Math",
+      "sessions_per_week": 1,
+      "session_duration_slots": 2,
+      "required_room_type": "computer_lab",
+      "student_group_id": "sg4",
+      "eligible_teacher_ids": [
+        "t5",
+        "t8"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c15",
+      "name": "Advanced Linear Algebra",
+      "subject": "linear_algebra",
+      "department": "Math",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg4",
+      "eligible_teacher_ids": [
+        "t7",
+        "t8"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c16",
+      "name": "Advanced Calculus",
+      "subject": "calculus",
+      "department": "Math",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg4",
+      "eligible_teacher_ids": [
+        "t5",
+        "t7"
+      ],
+      "is_fixed": true,
+      "fixed_day": 1,
+      "fixed_period": 2
+    },
+    {
+      "id": "c17",
+      "name": "Mechanics",
+      "subject": "mechanics",
+      "department": "Physics",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg5",
+      "eligible_teacher_ids": [
+        "t9",
+        "t10",
+        "t11"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c18",
+      "name": "Mechanics Lab",
+      "subject": "mechanics",
+      "department": "Physics",
+      "sessions_per_week": 1,
+      "session_duration_slots": 2,
+      "required_room_type": "lab",
+      "student_group_id": "sg5",
+      "eligible_teacher_ids": [
+        "t9",
+        "t10"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c19",
+      "name": "Electromagnetics",
+      "subject": "electromagnetics",
+      "department": "Physics",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg6",
+      "eligible_teacher_ids": [
+        "t9",
+        "t11",
+        "t12"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c20",
+      "name": "Thermodynamics",
+      "subject": "thermodynamics",
+      "department": "Physics",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg5",
+      "eligible_teacher_ids": [
+        "t9",
+        "t10",
+        "t12"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c21",
+      "name": "Optics",
+      "subject": "optics",
+      "department": "Physics",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg6",
+      "eligible_teacher_ids": [
+        "t10",
+        "t11",
+        "t12"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c22",
+      "name": "Optics Lab",
+      "subject": "optics",
+      "department": "Physics",
+      "sessions_per_week": 1,
+      "session_duration_slots": 2,
+      "required_room_type": "lab",
+      "student_group_id": "sg6",
+      "eligible_teacher_ids": [
+        "t11",
+        "t12"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c23",
+      "name": "Thermodynamics Lab",
+      "subject": "thermodynamics",
+      "department": "Physics",
+      "sessions_per_week": 1,
+      "session_duration_slots": 2,
+      "required_room_type": "lab",
+      "student_group_id": "sg6",
+      "eligible_teacher_ids": [
+        "t9",
+        "t12"
+      ],
+      "is_fixed": true,
+      "fixed_day": 3,
+      "fixed_period": 5
+    },
+    {
+      "id": "c24",
+      "name": "English Composition",
+      "subject": "english",
+      "department": "Languages",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg7",
+      "eligible_teacher_ids": [
+        "t13",
+        "t14",
+        "t15"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c25",
+      "name": "Academic Writing",
+      "subject": "academic_writing",
+      "department": "Languages",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "seminar",
+      "student_group_id": "sg8",
+      "eligible_teacher_ids": [
+        "t13",
+        "t15"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c26",
+      "name": "Communication Skills",
+      "subject": "communication",
+      "department": "Languages",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg7",
+      "eligible_teacher_ids": [
+        "t14",
+        "t15"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c27",
+      "name": "Advanced English",
+      "subject": "english",
+      "department": "Languages",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg8",
+      "eligible_teacher_ids": [
+        "t13",
+        "t14"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c28",
+      "name": "Advanced Writing Workshop",
+      "subject": "academic_writing",
+      "department": "Languages",
+      "sessions_per_week": 2,
+      "session_duration_slots": 1,
+      "required_room_type": "seminar",
+      "student_group_id": "sg8",
+      "eligible_teacher_ids": [
+        "t13",
+        "t15"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c29",
+      "name": "Public Speaking",
+      "subject": "communication",
+      "department": "Languages",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "lecture_hall",
+      "student_group_id": "sg7",
+      "eligible_teacher_ids": [
+        "t14",
+        "t15"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    },
+    {
+      "id": "c30",
+      "name": "Business Communication",
+      "subject": "communication",
+      "department": "Languages",
+      "sessions_per_week": 1,
+      "session_duration_slots": 1,
+      "required_room_type": "seminar",
+      "student_group_id": "sg8",
+      "eligible_teacher_ids": [
+        "t13",
+        "t14",
+        "t15"
+      ],
+      "is_fixed": false,
+      "fixed_day": null,
+      "fixed_period": null
+    }
+  ],
+  "rooms": [
+    {
+      "id": "r1",
+      "name": "LH-101",
+      "building_id": "b1",
+      "capacity": 60,
+      "room_type": "lecture_hall",
+      "equipment": []
+    },
+    {
+      "id": "r2",
+      "name": "LH-102",
+      "building_id": "b1",
+      "capacity": 50,
+      "room_type": "lecture_hall",
+      "equipment": []
+    },
+    {
+      "id": "r3",
+      "name": "LH-103",
+      "building_id": "b1",
+      "capacity": 40,
+      "room_type": "lecture_hall",
+      "equipment": []
+    },
+    {
+      "id": "r4",
+      "name": "SEM-101",
+      "building_id": "b1",
+      "capacity": 20,
+      "room_type": "seminar",
+      "equipment": []
+    },
+    {
+      "id": "r5",
+      "name": "SEM-102",
+      "building_id": "b1",
+      "capacity": 20,
+      "room_type": "seminar",
+      "equipment": []
+    },
+    {
+      "id": "r6",
+      "name": "LAB-201",
+      "building_id": "b2",
+      "capacity": 40,
+      "room_type": "lab",
+      "equipment": []
+    },
+    {
+      "id": "r7",
+      "name": "LAB-202",
+      "building_id": "b2",
+      "capacity": 35,
+      "room_type": "lab",
+      "equipment": []
+    },
+    {
+      "id": "r8",
+      "name": "LAB-203",
+      "building_id": "b2",
+      "capacity": 40,
+      "room_type": "lab",
+      "equipment": []
+    },
+    {
+      "id": "r9",
+      "name": "CLAB-201",
+      "building_id": "b2",
+      "capacity": 45,
+      "room_type": "computer_lab",
+      "equipment": []
+    },
+    {
+      "id": "r10",
+      "name": "LH-301",
+      "building_id": "b3",
+      "capacity": 50,
+      "room_type": "lecture_hall",
+      "equipment": []
+    },
+    {
+      "id": "r11",
+      "name": "LH-302",
+      "building_id": "b3",
+      "capacity": 40,
+      "room_type": "lecture_hall",
+      "equipment": []
+    },
+    {
+      "id": "r12",
+      "name": "AUD-301",
+      "building_id": "b3",
+      "capacity": 100,
+      "room_type": "auditorium",
+      "equipment": []
+    }
+  ],
+  "buildings": [
+    {
+      "id": "b1",
+      "name": "Main",
+      "travel_time_to": {
+        "b1": 0,
+        "b2": 5,
+        "b3": 10
+      }
+    },
+    {
+      "id": "b2",
+      "name": "Science",
+      "travel_time_to": {
+        "b1": 5,
+        "b2": 0,
+        "b3": 15
+      }
+    },
+    {
+      "id": "b3",
+      "name": "Arts",
+      "travel_time_to": {
+        "b1": 10,
+        "b2": 15,
+        "b3": 0
+      }
+    }
+  ],
+  "student_groups": [
+    {
+      "id": "sg1",
+      "name": "CS-Y1",
+      "size": 40,
+      "required_course_ids": [
+        "c1",
+        "c2",
+        "c6",
+        "c7"
+      ]
+    },
+    {
+      "id": "sg2",
+      "name": "CS-Y2",
+      "size": 35,
+      "required_course_ids": [
+        "c3",
+        "c4",
+        "c5",
+        "c8"
+      ]
+    },
+    {
+      "id": "sg3",
+      "name": "Math-Y1",
+      "size": 30,
+      "required_course_ids": [
+        "c9",
+        "c11",
+        "c13"
+      ]
+    },
+    {
+      "id": "sg4",
+      "name": "Math-Y2",
+      "size": 25,
+      "required_course_ids": [
+        "c10",
+        "c12",
+        "c14",
+        "c15",
+        "c16"
+      ]
+    },
+    {
+      "id": "sg5",
+      "name": "Physics-Y1",
+      "size": 35,
+      "required_course_ids": [
+        "c17",
+        "c18",
+        "c20"
+      ]
+    },
+    {
+      "id": "sg6",
+      "name": "Physics-Y2",
+      "size": 30,
+      "required_course_ids": [
+        "c19",
+        "c21",
+        "c22",
+        "c23"
+      ]
+    },
+    {
+      "id": "sg7",
+      "name": "Lang-Y1",
+      "size": 45,
+      "required_course_ids": [
+        "c24",
+        "c26",
+        "c29"
+      ]
+    },
+    {
+      "id": "sg8",
+      "name": "Lang-Y2",
+      "size": 20,
+      "required_course_ids": [
+        "c25",
+        "c27",
+        "c28",
+        "c30"
+      ]
+    }
+  ]
+}
