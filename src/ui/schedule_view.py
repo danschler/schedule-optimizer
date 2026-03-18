@@ -235,18 +235,20 @@ st.plotly_chart(fig, use_container_width=True)
 # -- Export to CSV ---------------------------------------------------------
 buf = io.StringIO()
 writer = csv.writer(buf)
-writer.writerow(["Course", "Teacher", "Room", "Day", "Period", "Department", "Group"])
+writer.writerow(["Course", "Teacher", "Room", "Day", "Period", "Duration", "Department", "Group"])
 for a in filtered_assignments:
     course = courses_map.get(a.course_id)
     teacher = teachers_map.get(a.teacher_id)
     room = rooms_map.get(a.room_id)
     group = groups_map.get(course.student_group_id) if course else None
+    duration = course.session_duration_slots if course else 1
     writer.writerow([
         course.name if course else a.course_id,
         teacher.name if teacher else a.teacher_id,
         room.name if room else a.room_id,
         DAY_SHORT[a.day] if a.day < len(DAY_SHORT) else a.day,
         PERIOD_LABELS[a.period] if a.period < len(PERIOD_LABELS) else a.period,
+        f"{duration}h",
         course.department if course else "",
         group.name if group else "",
     ])

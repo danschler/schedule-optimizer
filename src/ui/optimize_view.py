@@ -130,6 +130,14 @@ if run_btn:
 
     config = ConstraintConfig.from_dict(st.session_state.constraint_weights)
 
+    # Validate referential integrity before solving
+    ref_errors = data.validate_references()
+    if ref_errors:
+        st.error("**Data validation errors** (fix on the Data page):")
+        for err in ref_errors:
+            st.caption(f"  - {err}")
+        st.stop()
+
     with st.spinner(f"Solving with {time_limit}s time limit..."):
         optimizer = ScheduleOptimizer(data, config)
         schedule = optimizer.solve(time_limit=time_limit)

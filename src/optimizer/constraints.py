@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from pydantic import BaseModel, Field
 
 from src.models.course import Course, RoomType
 from src.models.room import Room
@@ -11,45 +11,28 @@ from src.models.teacher import Teacher
 from src.models.time_slot import DAYS, PERIODS_PER_DAY, slot_index
 
 
-@dataclass
-class ConstraintConfig:
+class ConstraintConfig(BaseModel):
     """Configuration for soft constraint weights."""
 
-    student_gaps: float = 3.0
-    teacher_gaps: float = 2.0
-    building_travel: float = 4.0
-    even_distribution: float = 2.0
-    lunch_breaks: float = 5.0
-    morning_core: float = 1.0
-    no_same_subject_twice: float = 3.0
-    teacher_day_off: float = 2.0
-    back_to_back_limit: float = 3.0
-    even_workload: float = 1.0
+    student_gaps: float = Field(default=3.0, ge=0.0)
+    teacher_gaps: float = Field(default=2.0, ge=0.0)
+    building_travel: float = Field(default=4.0, ge=0.0)
+    even_distribution: float = Field(default=2.0, ge=0.0)
+    lunch_breaks: float = Field(default=5.0, ge=0.0)
+    morning_core: float = Field(default=1.0, ge=0.0)
+    no_same_subject_twice: float = Field(default=3.0, ge=0.0)
+    teacher_day_off: float = Field(default=2.0, ge=0.0)
+    back_to_back_limit: float = Field(default=3.0, ge=0.0)
+    even_workload: float = Field(default=1.0, ge=0.0)
 
     def as_dict(self) -> dict[str, float]:
         """Return all weights as a dictionary."""
-        return {
-            "student_gaps": self.student_gaps,
-            "teacher_gaps": self.teacher_gaps,
-            "building_travel": self.building_travel,
-            "even_distribution": self.even_distribution,
-            "lunch_breaks": self.lunch_breaks,
-            "morning_core": self.morning_core,
-            "no_same_subject_twice": self.no_same_subject_twice,
-            "teacher_day_off": self.teacher_day_off,
-            "back_to_back_limit": self.back_to_back_limit,
-            "even_workload": self.even_workload,
-        }
+        return self.model_dump()
 
     @classmethod
     def from_dict(cls, d: dict[str, float]) -> ConstraintConfig:
         """Create a ConstraintConfig from a dictionary, ignoring unknown keys."""
-        known_fields = {
-            "student_gaps", "teacher_gaps", "building_travel",
-            "even_distribution", "lunch_breaks", "morning_core",
-            "no_same_subject_twice", "teacher_day_off",
-            "back_to_back_limit", "even_workload",
-        }
+        known_fields = cls.model_fields.keys()
         filtered = {k: v for k, v in d.items() if k in known_fields}
         return cls(**filtered)
 

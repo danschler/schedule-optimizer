@@ -105,18 +105,26 @@ if score is not None and hasattr(score, "constraint_scores"):
     )
     st.plotly_chart(fig_constraints, use_container_width=True)
 
-    # Actionable hint mapping
+    # Actionable hint mapping (keys match cs.name.lower().replace(" ", "_"))
     _VIOLATION_HINTS: dict[str, str] = {
-        "teacher_conflict": "Add more teachers or adjust availability windows.",
-        "room_conflict": "Add more rooms or reduce session durations.",
-        "student_group_conflict": "Check for overlapping required courses across groups.",
-        "teacher_availability": "Expand teacher availability on the Data page.",
-        "room_capacity": "Assign courses to larger rooms or reduce group sizes.",
+        "no_teacher_time_conflict": "Add more teachers or adjust availability windows.",
+        "no_room_double-booking": "Add more rooms or reduce session durations.",
+        "no_student_group_time_conflict": "Check for overlapping required courses across groups.",
+        "room_capacity_sufficient": "Assign courses to larger rooms or reduce group sizes.",
+        "room_type_matches_requirement": "Add rooms of the required type on the Data page.",
+        "correct_assignment_count": "Ensure all courses have eligible teachers and rooms.",
+        "fixed_courses_at_fixed_slots": "Check that fixed course slots have available teachers.",
+        "teacher_hour_limits": "Reduce course load or raise teacher max-hours on the Data page.",
+        "student_gaps": "Increase the 'Student Gaps' weight on Optimize page.",
         "teacher_gaps": "Increase the 'Teacher Gaps' weight on Optimize page.",
-        "teacher_max_hours": "Reduce course load or raise teacher max-hours.",
-        "lunch_conflict": "Increase the 'Lunch Breaks' weight on Optimize page.",
-        "consecutive_classes": "Increase the 'Back-to-Back Limit' weight.",
-        "building_change": "Increase the 'Building Travel' weight.",
+        "building_travel": "Increase the 'Building Travel' weight on Optimize page.",
+        "even_daily_distribution": "Increase the 'Even Distribution' weight on Optimize page.",
+        "lunch_breaks": "Increase the 'Lunch Breaks' weight on Optimize page.",
+        "morning_core_subjects": "Increase the 'Morning Core' weight on Optimize page.",
+        "no_same_subject_twice_per_day": "Increase the 'No Same Subject Twice' weight on Optimize page.",
+        "teacher_preferred_days_off": "Increase the 'Teacher Day Off' weight on Optimize page.",
+        "back-to-back_teaching_limit": "Increase the 'Back-to-Back Limit' weight on Optimize page.",
+        "even_teacher_workload": "Increase the 'Even Workload' weight on Optimize page.",
     }
 
     # Violation details

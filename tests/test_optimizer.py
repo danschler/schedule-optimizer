@@ -2,7 +2,6 @@
 
 import pytest
 
-from src.data.generator import generate_sample_data
 from src.models import (
     Building,
     Course,
@@ -18,22 +17,7 @@ from src.optimizer.constraints import ConstraintConfig
 from src.optimizer.engine import ScheduleOptimizer
 from src.optimizer.scoring import evaluate_schedule
 
-
-# ---------------------------------------------------------------------------
-# Fixtures
-# ---------------------------------------------------------------------------
-
-@pytest.fixture(scope="module")
-def sample_data():
-    """Generate sample data once for the module."""
-    return generate_sample_data()
-
-
-@pytest.fixture(scope="module")
-def solved_schedule(sample_data):
-    """Solve sample data once for the module (shared across tests)."""
-    optimizer = ScheduleOptimizer(sample_data)
-    return optimizer.solve(time_limit=60)
+# sample_data and solved_schedule fixtures provided by conftest.py
 
 
 # ---------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from collections import defaultdict
 
 from ortools.sat.python import cp_model
@@ -74,23 +75,55 @@ class ScheduleOptimizer:
         for c in data.courses:
             self._group_courses[c.student_group_id].append(c.id)
 
+        # Pre-computed variable indexes (populated in _create_variables)
+        self._vars_by_course_session: dict[
+            tuple[str, int], list[cp_model.IntVar]
+        ] = defaultdict(list)
+        self._vars_by_teacher_slot: dict[
+            tuple[str, int], list[cp_model.IntVar]
+        ] = defaultdict(list)
+        self._vars_by_room_slot: dict[
+            tuple[str, int], list[cp_model.IntVar]
+        ] = defaultdict(list)
+        self._vars_by_group_slot: dict[
+            tuple[str, int], list[cp_model.IntVar]
+        ] = defaultdict(list)
+        self._vars_by_teacher_day: dict[
+            tuple[str, int], list[tuple[cp_model.IntVar, int]]
+        ] = defaultdict(list)
+        self._vars_by_teacher_week: dict[
+            str, list[tuple[cp_model.IntVar, int]]
+        ] = defaultdict(list)
+        self._vars_by_teacher_day_period: dict[
+            tuple[str, int, int], list[cp_model.IntVar]
+        ] = defaultdict(list)
+        self._vars_by_group_day_period: dict[
+            tuple[str, int, int], list[cp_model.IntVar]
+        ] = defaultdict(list)
+        self._vars_by_group_day_period_bldg: dict[
+            tuple[str, int, int], list[tuple[str, cp_model.IntVar]]
+        ] = defaultdict(list)
+
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
 
-    def solve(self, time_limit: int = 30) -> Schedule:
+    def solve(self, time_limit: int = 30, num_workers: int | None = None) -> Schedule:
         """Build and solve the CP-SAT model.
 
         Parameters
         ----------
         time_limit:
             Maximum solver time in seconds.
+        num_workers:
+            Number of parallel workers. Defaults to os.cpu_count() or 8.
 
         Returns
         -------
         Schedule with assignments on success, or status="infeasible".
         """
         self._create_variables()
+        self._build_indexes()
         self._add_hard_constraints()
         penalties = self._add_soft_constraints()
         if penalties:
@@ -98,7 +131,7 @@ class ScheduleOptimizer:
 
         solver = cp_model.CpSolver()
         solver.parameters.max_time_in_seconds = time_limit
-        solver.parameters.num_workers = 8
+        solver.parameters.num_workers = num_workers or os.cpu_count() or 8
 
         status = solver.Solve(self.model)
 
@@ -135,6 +168,36 @@ class ScheduleOptimizer:
                             )
                             self.variables[key] = self.model.NewBoolVar(name)
 
+    def _build_indexes(self) -> None:
+        """Pre-compute lookup structures from variables for constraint methods."""
+        for (cid, sidx, tid, rid, start_sl), var in self.variables.items():
+            course = self.courses_by_id[cid]
+            duration = course.session_duration_slots
+            day, period = slot_to_day_period(start_sl)
+            gid = self._course_group.get(cid)
+            room = self.rooms_by_id[rid]
+
+            # By course-session
+            self._vars_by_course_session[(cid, sidx)].append(var)
+
+            # By teacher/room/group occupied slots (expanded for duration)
+            for d in range(duration):
+                occupied_slot = start_sl + d
+                occ_period = period + d
+                self._vars_by_teacher_slot[(tid, occupied_slot)].append(var)
+                self._vars_by_room_slot[(rid, occupied_slot)].append(var)
+                if gid:
+                    self._vars_by_group_slot[(gid, occupied_slot)].append(var)
+                    self._vars_by_group_day_period[(gid, day, occ_period)].append(var)
+                    self._vars_by_group_day_period_bldg[
+                        (gid, day, occ_period)
+                    ].append((room.building_id, var))
+                self._vars_by_teacher_day_period[(tid, day, occ_period)].append(var)
+
+            # By teacher-day and teacher-week (for hour limits)
+            self._vars_by_teacher_day[(tid, day)].append((var, duration))
+            self._vars_by_teacher_week[tid].append((var, duration))
+
     # ------------------------------------------------------------------
     # Hard constraints
     # ------------------------------------------------------------------
@@ -148,73 +211,38 @@ class ScheduleOptimizer:
         self._hc_teacher_max_hours()
         self._hc_multi_session_ordering()
 
-    # HC1 – each (course, session) assigned exactly once
+    # HC1 -- each (course, session) assigned exactly once
     def _hc_exactly_one_assignment(self) -> None:
-        by_cs: dict[tuple[str, int], list[cp_model.IntVar]] = defaultdict(list)
-        for (cid, sidx, _tid, _rid, _sl), var in self.variables.items():
-            by_cs[(cid, sidx)].append(var)
-        for (cid, sidx), var_list in by_cs.items():
+        for var_list in self._vars_by_course_session.values():
             self.model.AddExactlyOne(var_list)
 
-    # HC2 – no teacher double-booking
+    # HC2 -- no teacher double-booking
     def _hc_no_teacher_double_booking(self) -> None:
-        # teacher_id, occupied_slot -> list of vars
-        teacher_slot: dict[tuple[str, int], list[cp_model.IntVar]] = defaultdict(list)
-        for (cid, _sidx, tid, _rid, start_sl), var in self.variables.items():
-            duration = self.courses_by_id[cid].session_duration_slots
-            for d in range(duration):
-                teacher_slot[(tid, start_sl + d)].append(var)
-        for _key, var_list in teacher_slot.items():
+        for var_list in self._vars_by_teacher_slot.values():
             if len(var_list) > 1:
                 self.model.Add(sum(var_list) <= 1)
 
-    # HC3 – no room double-booking
+    # HC3 -- no room double-booking
     def _hc_no_room_double_booking(self) -> None:
-        room_slot: dict[tuple[str, int], list[cp_model.IntVar]] = defaultdict(list)
-        for (cid, _sidx, _tid, rid, start_sl), var in self.variables.items():
-            duration = self.courses_by_id[cid].session_duration_slots
-            for d in range(duration):
-                room_slot[(rid, start_sl + d)].append(var)
-        for _key, var_list in room_slot.items():
+        for var_list in self._vars_by_room_slot.values():
             if len(var_list) > 1:
                 self.model.Add(sum(var_list) <= 1)
 
-    # HC8 – no student-group double-booking
+    # HC8 -- no student-group double-booking
     def _hc_no_student_group_double_booking(self) -> None:
-        group_slot: dict[tuple[str, int], list[cp_model.IntVar]] = defaultdict(list)
-        for (cid, _sidx, _tid, _rid, start_sl), var in self.variables.items():
-            gid = self._course_group.get(cid)
-            if gid is None:
-                continue
-            duration = self.courses_by_id[cid].session_duration_slots
-            for d in range(duration):
-                group_slot[(gid, start_sl + d)].append(var)
-        for _key, var_list in group_slot.items():
+        for var_list in self._vars_by_group_slot.values():
             if len(var_list) > 1:
                 self.model.Add(sum(var_list) <= 1)
 
-    # HC7 – max teaching hours per day / per week
+    # HC7 -- max teaching hours per day / per week
     def _hc_teacher_max_hours(self) -> None:
-        # Per-day
-        teacher_day: dict[tuple[str, int], list[tuple[cp_model.IntVar, int]]] = (
-            defaultdict(list)
-        )
-        # Per-week
-        teacher_week: dict[str, list[tuple[cp_model.IntVar, int]]] = defaultdict(list)
-
-        for (cid, _sidx, tid, _rid, start_sl), var in self.variables.items():
-            duration = self.courses_by_id[cid].session_duration_slots
-            day, _ = slot_to_day_period(start_sl)
-            teacher_day[(tid, day)].append((var, duration))
-            teacher_week[tid].append((var, duration))
-
-        for (tid, _day), entries in teacher_day.items():
+        for (tid, _day), entries in self._vars_by_teacher_day.items():
             teacher = self.teachers_by_id[tid]
             self.model.Add(
                 sum(var * dur for var, dur in entries) <= teacher.max_hours_day
             )
 
-        for tid, entries in teacher_week.items():
+        for tid, entries in self._vars_by_teacher_week.items():
             teacher = self.teachers_by_id[tid]
             self.model.Add(
                 sum(var * dur for var, dur in entries) <= teacher.max_hours_week
@@ -222,7 +250,6 @@ class ScheduleOptimizer:
 
     # Symmetry breaking: session i must start before session i+1
     def _hc_multi_session_ordering(self) -> None:
-        # Collect variables per (course_id, session_idx)
         cs_vars: dict[tuple[str, int], list[tuple[int, cp_model.IntVar]]] = (
             defaultdict(list)
         )
@@ -235,7 +262,6 @@ class ScheduleOptimizer:
         for course in courses_with_multi:
             total_slots = DAYS * PERIODS_PER_DAY
             for sidx in range(course.sessions_per_week - 1):
-                # Build an IntVar representing the chosen start_slot for each session
                 vars_a = cs_vars.get((course.id, sidx), [])
                 vars_b = cs_vars.get((course.id, sidx + 1), [])
                 if not vars_a or not vars_b:
@@ -245,7 +271,6 @@ class ScheduleOptimizer:
                                                   f"slot_{course.id}_{sidx}")
                 slot_var_b = self.model.NewIntVar(0, total_slots - 1,
                                                   f"slot_{course.id}_{sidx+1}")
-                # Link: slot_var_a = sum of (slot * boolvar) for each option
                 self.model.Add(
                     slot_var_a == sum(sl * v for sl, v in vars_a)
                 )
@@ -273,153 +298,98 @@ class ScheduleOptimizer:
         penalties.extend(self._sc_even_workload())
         return penalties
 
-    # SC1 – student gaps: penalise empty periods between first and last class
+    # Shared helper for gap penalties (used by SC1 and SC2)
+    def _build_gap_penalties(
+        self,
+        entity_day_period: dict[tuple[str, int, int], list[cp_model.IntVar]],
+        entity_ids: list[str],
+        w: int,
+        prefix: str,
+    ) -> list[cp_model.IntVar]:
+        """Build gap penalties for a set of entities (groups or teachers).
+
+        For each entity/day, penalise empty periods between the first and last
+        occupied period.
+        """
+        penalties: list[cp_model.IntVar] = []
+        for eid in entity_ids:
+            for day in range(DAYS):
+                occupied: dict[int, cp_model.IntVar] = {}
+                for period in range(PERIODS_PER_DAY):
+                    var_list = entity_day_period.get((eid, day, period))
+                    if var_list:
+                        occ = self.model.NewBoolVar(
+                            f"{prefix}occ_{eid}_d{day}_p{period}"
+                        )
+                        self.model.AddMaxEquality(occ, var_list)
+                        occupied[period] = occ
+
+                if len(occupied) < 2:
+                    continue
+
+                sorted_periods = sorted(occupied.keys())
+                for i in range(len(sorted_periods) - 1):
+                    p_lo = sorted_periods[i]
+                    p_hi = sorted_periods[i + 1]
+                    for mid in range(p_lo + 1, p_hi):
+                        if mid in occupied:
+                            continue
+                        pen = self.model.NewBoolVar(
+                            f"{prefix}gap_{eid}_d{day}_{p_lo}_{mid}_{p_hi}"
+                        )
+                        self.model.AddBoolAnd(
+                            [occupied[p_lo], occupied[p_hi]]
+                        ).OnlyEnforceIf(pen)
+                        self.model.AddBoolOr(
+                            [occupied[p_lo].Not(), occupied[p_hi].Not()]
+                        ).OnlyEnforceIf(pen.Not())
+                        scaled = self.model.NewIntVar(
+                            0, w, f"{prefix}gap_w_{eid}_d{day}_p{mid}"
+                        )
+                        self.model.Add(scaled == w * pen)
+                        penalties.append(scaled)
+        return penalties
+
+    # SC1 -- student gaps
     def _sc_student_gaps(self) -> list[cp_model.IntVar]:
         w = _weight(self.config.student_gaps)
         if w == 0:
             return []
-        penalties: list[cp_model.IntVar] = []
-
-        # For each group, day, period: indicator whether the group has a class
-        group_day_period: dict[tuple[str, int, int], list[cp_model.IntVar]] = (
-            defaultdict(list)
+        return self._build_gap_penalties(
+            self._vars_by_group_day_period,
+            list(self.groups_by_id.keys()),
+            w,
+            "s",
         )
-        for (cid, _sidx, _tid, _rid, start_sl), var in self.variables.items():
-            gid = self._course_group.get(cid)
-            if gid is None:
-                continue
-            duration = self.courses_by_id[cid].session_duration_slots
-            day, period = slot_to_day_period(start_sl)
-            for d in range(duration):
-                group_day_period[(gid, day, period + d)].append(var)
 
-        # For each group, day: penalise each unoccupied period that falls
-        # between the first and last occupied period (matching scorer logic).
-        for gid in self.groups_by_id:
-            for day in range(DAYS):
-                # occupied[p] = BoolVar indicating group has a class at period p
-                occupied: dict[int, cp_model.IntVar] = {}
-                for period in range(PERIODS_PER_DAY):
-                    var_list = group_day_period.get((gid, day, period))
-                    if var_list:
-                        occ = self.model.NewBoolVar(
-                            f"gocc_{gid}_d{day}_p{period}"
-                        )
-                        self.model.AddMaxEquality(occ, var_list)
-                        occupied[period] = occ
-
-                if len(occupied) < 2:
-                    continue
-
-                sorted_periods = sorted(occupied.keys())
-                # For each consecutive pair of occupied periods, penalise
-                # every empty period between them exactly once.
-                for i in range(len(sorted_periods) - 1):
-                    p_lo = sorted_periods[i]
-                    p_hi = sorted_periods[i + 1]
-                    for mid in range(p_lo + 1, p_hi):
-                        if mid in occupied:
-                            continue
-                        pen = self.model.NewBoolVar(
-                            f"sgap_{gid}_d{day}_{p_lo}_{mid}_{p_hi}"
-                        )
-                        self.model.AddBoolAnd(
-                            [occupied[p_lo], occupied[p_hi]]
-                        ).OnlyEnforceIf(pen)
-                        self.model.AddBoolOr(
-                            [occupied[p_lo].Not(), occupied[p_hi].Not()]
-                        ).OnlyEnforceIf(pen.Not())
-                        scaled = self.model.NewIntVar(
-                            0, w, f"sgap_w_{gid}_d{day}_p{mid}"
-                        )
-                        self.model.Add(scaled == w * pen)
-                        penalties.append(scaled)
-        return penalties
-
-    # SC2 – teacher gaps (same logic as student gaps but per teacher)
+    # SC2 -- teacher gaps
     def _sc_teacher_gaps(self) -> list[cp_model.IntVar]:
         w = _weight(self.config.teacher_gaps)
         if w == 0:
             return []
-        penalties: list[cp_model.IntVar] = []
-
-        teacher_day_period: dict[tuple[str, int, int], list[cp_model.IntVar]] = (
-            defaultdict(list)
+        return self._build_gap_penalties(
+            self._vars_by_teacher_day_period,
+            list(self.teachers_by_id.keys()),
+            w,
+            "t",
         )
-        for (cid, _sidx, tid, _rid, start_sl), var in self.variables.items():
-            duration = self.courses_by_id[cid].session_duration_slots
-            day, period = slot_to_day_period(start_sl)
-            for d in range(duration):
-                teacher_day_period[(tid, day, period + d)].append(var)
 
-        for tid in self.teachers_by_id:
-            for day in range(DAYS):
-                occupied: dict[int, cp_model.IntVar] = {}
-                for period in range(PERIODS_PER_DAY):
-                    var_list = teacher_day_period.get((tid, day, period))
-                    if var_list:
-                        occ = self.model.NewBoolVar(
-                            f"tocc_{tid}_d{day}_p{period}"
-                        )
-                        self.model.AddMaxEquality(occ, var_list)
-                        occupied[period] = occ
-
-                if len(occupied) < 2:
-                    continue
-
-                sorted_periods = sorted(occupied.keys())
-                for i in range(len(sorted_periods) - 1):
-                    p_lo = sorted_periods[i]
-                    p_hi = sorted_periods[i + 1]
-                    for mid in range(p_lo + 1, p_hi):
-                        if mid in occupied:
-                            continue
-                        pen = self.model.NewBoolVar(
-                            f"tgap_{tid}_d{day}_{p_lo}_{mid}_{p_hi}"
-                        )
-                        self.model.AddBoolAnd(
-                            [occupied[p_lo], occupied[p_hi]]
-                        ).OnlyEnforceIf(pen)
-                        self.model.AddBoolOr(
-                            [occupied[p_lo].Not(), occupied[p_hi].Not()]
-                        ).OnlyEnforceIf(pen.Not())
-                        scaled = self.model.NewIntVar(
-                            0, w, f"tgap_w_{tid}_d{day}_p{mid}"
-                        )
-                        self.model.Add(scaled == w * pen)
-                        penalties.append(scaled)
-        return penalties
-
-    # SC3 – building travel: penalise consecutive slots in different buildings
+    # SC3 -- building travel: penalise consecutive slots in different buildings,
+    #         weighted by actual travel time (matching scorer)
     def _sc_building_travel(self) -> list[cp_model.IntVar]:
         w = _weight(self.config.building_travel)
         if w == 0:
             return []
         penalties: list[cp_model.IntVar] = []
-
-        # For each student group, day, period -> list of (building_id, var)
-        group_day_period_bldg: dict[
-            tuple[str, int, int], list[tuple[str, cp_model.IntVar]]
-        ] = defaultdict(list)
-        for (cid, _sidx, _tid, rid, start_sl), var in self.variables.items():
-            gid = self._course_group.get(cid)
-            if gid is None:
-                continue
-            room = self.rooms_by_id[rid]
-            duration = self.courses_by_id[cid].session_duration_slots
-            day, period = slot_to_day_period(start_sl)
-            for d in range(duration):
-                group_day_period_bldg[(gid, day, period + d)].append(
-                    (room.building_id, var)
-                )
+        pen_counter = 0
 
         for gid in self.groups_by_id:
             for day in range(DAYS):
                 for period in range(PERIODS_PER_DAY - 1):
-                    entries_a = group_day_period_bldg.get(
+                    entries_a = self._vars_by_group_day_period_bldg.get(
                         (gid, day, period), []
                     )
-                    entries_b = group_day_period_bldg.get(
+                    entries_b = self._vars_by_group_day_period_bldg.get(
                         (gid, day, period + 1), []
                     )
                     if not entries_a or not entries_b:
@@ -428,6 +398,13 @@ class ScheduleOptimizer:
                         for bid_b, var_b in entries_b:
                             if bid_a == bid_b:
                                 continue
+                            # Look up actual travel time
+                            bldg = self.buildings_by_id.get(bid_a)
+                            travel = 1
+                            if bldg:
+                                travel = max(
+                                    bldg.travel_time_to.get(bid_b, 1), 1
+                                )
                             pen = self.model.NewBoolVar(
                                 f"travel_{gid}_d{day}_p{period}_{bid_a}_{bid_b}"
                             )
@@ -437,27 +414,29 @@ class ScheduleOptimizer:
                             self.model.AddBoolOr(
                                 [var_a.Not(), var_b.Not()]
                             ).OnlyEnforceIf(pen.Not())
+                            scaled_w = w * travel
                             scaled = self.model.NewIntVar(
-                                0, w, f"travel_w_{gid}_d{day}_p{period}"
+                                0, scaled_w,
+                                f"travel_w_{gid}_d{day}_p{period}_{pen_counter}",
                             )
-                            self.model.Add(scaled == w * pen)
+                            pen_counter += 1
+                            self.model.Add(scaled == scaled_w * pen)
                             penalties.append(scaled)
         return penalties
 
-    # SC4 – even distribution of classes across days for each group
+    # SC4 -- even distribution of classes across days for each group
     def _sc_even_distribution(self) -> list[cp_model.IntVar]:
         w = _weight(self.config.even_distribution)
         if w == 0:
             return []
         penalties: list[cp_model.IntVar] = []
 
-        # For each group, compute daily load and penalise max - min
-        for gid, group in self.groups_by_id.items():
+        for gid in self.groups_by_id:
             course_ids = set(self._group_courses.get(gid, []))
             if not course_ids:
                 continue
 
-            # day -> list of (var, duration)
+            # Collect day loads from pre-computed index
             day_loads: dict[int, list[tuple[cp_model.IntVar, int]]] = defaultdict(list)
             for (cid, _sidx, _tid, _rid, start_sl), var in self.variables.items():
                 if cid not in course_ids:
@@ -469,7 +448,6 @@ class ScheduleOptimizer:
             if not day_loads:
                 continue
 
-            # Total possible slots across all courses for upper bound
             max_possible = sum(
                 self.courses_by_id[cid].sessions_per_week
                 * self.courses_by_id[cid].session_duration_slots
@@ -504,7 +482,6 @@ class ScheduleOptimizer:
             )
             self.model.Add(spread == max_load - min_load)
 
-            # Allow a spread of 1 for free (matching scorer logic)
             excess = self.model.NewIntVar(
                 0, max_possible, f"spread_exc_{gid}"
             )
@@ -519,7 +496,7 @@ class ScheduleOptimizer:
             penalties.append(pen)
         return penalties
 
-    # SC5 – lunch breaks: penalise assignments at LUNCH_PERIOD
+    # SC5 -- lunch breaks: penalise assignments at LUNCH_PERIOD
     def _sc_lunch_breaks(self) -> list[cp_model.IntVar]:
         w = _weight(self.config.lunch_breaks)
         if w == 0:
@@ -528,7 +505,6 @@ class ScheduleOptimizer:
         for (cid, _sidx, _tid, _rid, start_sl), var in self.variables.items():
             duration = self.courses_by_id[cid].session_duration_slots
             _day, period = slot_to_day_period(start_sl)
-            # Check if this session occupies the lunch period
             occupies_lunch = any(
                 (period + d) == LUNCH_PERIOD for d in range(duration)
             )
@@ -538,7 +514,7 @@ class ScheduleOptimizer:
                 penalties.append(pen)
         return penalties
 
-    # SC6 – morning preference for core subjects (penalise afternoon slots)
+    # SC6 -- morning preference for core subjects (penalise afternoon slots)
     _CORE_KEYWORDS = frozenset({
         "math", "mathematics", "science", "physics", "chemistry",
         "biology", "language", "english", "literature", "history",
@@ -563,14 +539,13 @@ class ScheduleOptimizer:
                 penalties.append(pen)
         return penalties
 
-    # SC7 – no same subject twice in one day for a group
+    # SC7 -- no same subject twice in one day for a group
     def _sc_no_same_subject_twice(self) -> list[cp_model.IntVar]:
         w = _weight(self.config.no_same_subject_twice)
         if w == 0:
             return []
         penalties: list[cp_model.IntVar] = []
 
-        # (group_id, day, subject) -> list of vars
         gds: dict[tuple[str, int, str], list[cp_model.IntVar]] = defaultdict(list)
         for (cid, _sidx, _tid, _rid, start_sl), var in self.variables.items():
             course = self.courses_by_id[cid]
@@ -581,7 +556,6 @@ class ScheduleOptimizer:
         for (gid, day, subj), var_list in gds.items():
             if len(var_list) <= 1:
                 continue
-            # Penalise count - 1 (i.e. every duplicate)
             total = self.model.NewIntVar(
                 0, len(var_list), f"subj_cnt_{gid}_d{day}_{subj}"
             )
@@ -597,7 +571,7 @@ class ScheduleOptimizer:
             penalties.append(pen)
         return penalties
 
-    # SC8 – teacher preferred days off
+    # SC8 -- teacher preferred days off
     def _sc_teacher_day_off(self) -> list[cp_model.IntVar]:
         w = _weight(self.config.teacher_day_off)
         if w == 0:
@@ -616,29 +590,20 @@ class ScheduleOptimizer:
                 penalties.append(pen)
         return penalties
 
-    # SC9 – back-to-back limit: penalise >3 consecutive teaching periods
+    # SC9 -- back-to-back limit: penalise >3 consecutive teaching periods
     def _sc_back_to_back_limit(self) -> list[cp_model.IntVar]:
         w = _weight(self.config.back_to_back_limit)
         if w == 0:
             return []
         penalties: list[cp_model.IntVar] = []
 
-        # Reuse teacher-day-period occupancy indicators
-        teacher_day_period: dict[tuple[str, int, int], list[cp_model.IntVar]] = (
-            defaultdict(list)
-        )
-        for (cid, _sidx, tid, _rid, start_sl), var in self.variables.items():
-            duration = self.courses_by_id[cid].session_duration_slots
-            day, period = slot_to_day_period(start_sl)
-            for d in range(duration):
-                teacher_day_period[(tid, day, period + d)].append(var)
-
         for tid in self.teachers_by_id:
             for day in range(DAYS):
-                # Build occupancy indicators
                 occupied: dict[int, cp_model.IntVar] = {}
                 for period in range(PERIODS_PER_DAY):
-                    var_list = teacher_day_period.get((tid, day, period))
+                    var_list = self._vars_by_teacher_day_period.get(
+                        (tid, day, period)
+                    )
                     if var_list:
                         occ = self.model.NewBoolVar(
                             f"b2b_occ_{tid}_d{day}_p{period}"
@@ -651,10 +616,8 @@ class ScheduleOptimizer:
                     window = [
                         occupied.get(start_p + k) for k in range(4)
                     ]
-                    # If any period has no possible assignment, skip
                     if any(v is None for v in window):
                         continue
-                    # Penalise all 4 being occupied
                     pen = self.model.NewBoolVar(
                         f"b2b_{tid}_d{day}_p{start_p}"
                     )
@@ -669,53 +632,39 @@ class ScheduleOptimizer:
                     penalties.append(scaled)
         return penalties
 
-    # SC10 – even workload: penalise per-teacher daily spread (matching scorer)
+    # SC10 -- even workload: penalise per-teacher daily spread
+    #         Only considers days with possible assignments (matching scorer).
     def _sc_even_workload(self) -> list[cp_model.IntVar]:
         w = _weight(self.config.even_workload)
         if w == 0:
             return []
         penalties: list[cp_model.IntVar] = []
 
-        # teacher, day -> list of (var, duration)
-        teacher_day_loads: dict[tuple[str, int], list[tuple[cp_model.IntVar, int]]] = (
-            defaultdict(list)
-        )
-        for (cid, _sidx, tid, _rid, start_sl), var in self.variables.items():
-            dur = self.courses_by_id[cid].session_duration_slots
-            day, _ = slot_to_day_period(start_sl)
-            teacher_day_loads[(tid, day)].append((var, dur))
-
         max_daily = max(
             (t.max_hours_day for t in self.data.teachers), default=9
         )
 
         for tid, teacher in self.teachers_by_id.items():
-            day_vars: list[cp_model.IntVar] = []
-            has_any = False
+            # Only build day vars for days that have possible assignments
+            active_day_vars: list[cp_model.IntVar] = []
             for day in range(DAYS):
-                dv = self.model.NewIntVar(
-                    0, max_daily, f"wload_{tid}_d{day}"
-                )
-                entries = teacher_day_loads.get((tid, day))
+                entries = self._vars_by_teacher_day.get((tid, day))
                 if entries:
+                    dv = self.model.NewIntVar(
+                        0, max_daily, f"wload_{tid}_d{day}"
+                    )
                     self.model.Add(
                         dv == sum(var * dur for var, dur in entries)
                     )
-                    has_any = True
-                else:
-                    self.model.Add(dv == 0)
-                day_vars.append(dv)
+                    active_day_vars.append(dv)
 
-            if not has_any:
+            if len(active_day_vars) < 2:
                 continue
 
-            # Only consider days with possible assignments for min
-            # (scorer uses only days the teacher actually works)
-            # We penalise max - min across all days with load > 0
             max_d = self.model.NewIntVar(0, max_daily, f"wload_max_{tid}")
             min_d = self.model.NewIntVar(0, max_daily, f"wload_min_{tid}")
-            self.model.AddMaxEquality(max_d, day_vars)
-            self.model.AddMinEquality(min_d, day_vars)
+            self.model.AddMaxEquality(max_d, active_day_vars)
+            self.model.AddMinEquality(min_d, active_day_vars)
 
             spread = self.model.NewIntVar(0, max_daily, f"wload_spread_{tid}")
             self.model.Add(spread == max_d - min_d)
@@ -748,14 +697,13 @@ class ScheduleOptimizer:
         status_str = "optimal" if status == cp_model.OPTIMAL else "feasible"
         assignments: list[ScheduleAssignment] = []
 
-        for (cid, _sidx, tid, rid, start_sl), var in self.variables.items():
+        for (cid, sidx, tid, rid, start_sl), var in self.variables.items():
             if solver.Value(var):
                 day, period = slot_to_day_period(start_sl)
-                # One assignment per session at the start slot.
-                # Downstream code uses session_duration_slots to expand.
                 assignments.append(
                     ScheduleAssignment(
                         course_id=cid,
+                        session_index=sidx,
                         teacher_id=tid,
                         room_id=rid,
                         day=day,

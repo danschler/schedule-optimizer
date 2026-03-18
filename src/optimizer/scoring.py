@@ -15,6 +15,7 @@ from src.models import (
     TOTAL_SLOTS,
 )
 from src.models.schedule import Schedule, ScheduleAssignment, ScheduleData
+from src.optimizer.constraints import ConstraintConfig
 
 
 # ---------------------------------------------------------------------------
@@ -42,21 +43,10 @@ class ScheduleScore:
 
 
 # ---------------------------------------------------------------------------
-# Default soft-constraint weights
+# Default soft-constraint weights (single source of truth: ConstraintConfig)
 # ---------------------------------------------------------------------------
 
-DEFAULT_WEIGHTS: dict[str, float] = {
-    "student_gaps": 3.0,
-    "teacher_gaps": 2.0,
-    "building_travel": 4.0,
-    "even_distribution": 2.0,
-    "lunch_breaks": 5.0,
-    "morning_core": 1.0,
-    "no_same_subject_twice": 3.0,
-    "teacher_day_off": 2.0,
-    "back_to_back_limit": 3.0,
-    "even_workload": 1.0,
-}
+DEFAULT_WEIGHTS: dict[str, float] = ConstraintConfig().as_dict()
 
 
 # ---------------------------------------------------------------------------

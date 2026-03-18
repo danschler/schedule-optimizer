@@ -2,7 +2,6 @@
 
 import pytest
 
-from src.data.generator import generate_sample_data
 from src.models import (
     Building,
     Course,
@@ -17,20 +16,7 @@ from src.models import (
 from src.optimizer.engine import ScheduleOptimizer
 from src.optimizer.scoring import evaluate_schedule
 
-
-# ---------------------------------------------------------------------------
-# Fixtures
-# ---------------------------------------------------------------------------
-
-@pytest.fixture(scope="module")
-def sample_data():
-    return generate_sample_data()
-
-
-@pytest.fixture(scope="module")
-def solved_schedule(sample_data):
-    optimizer = ScheduleOptimizer(sample_data)
-    return optimizer.solve(time_limit=60)
+# sample_data and solved_schedule fixtures provided by conftest.py
 
 
 def _make_simple_data():
