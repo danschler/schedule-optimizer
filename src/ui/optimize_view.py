@@ -61,7 +61,11 @@ with preset_col:
         help="Presets adjust all soft constraint weights at once. You can fine-tune after loading.",
     )
     if st.button("Apply Preset", key="apply_preset"):
-        st.session_state.constraint_weights = dict(PRESETS[selected_preset])
+        preset = dict(PRESETS[selected_preset])
+        st.session_state.constraint_weights = preset
+        # Also update individual slider widget state so they reflect the new values
+        for key, value in preset.items():
+            st.session_state[f"weight_{key}"] = value
         st.rerun()
 
 # -- Constraint weight configuration ---------------------------------------

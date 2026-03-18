@@ -60,6 +60,7 @@ def get_eligible_slots(
     teacher: Teacher,
     days: int = DAYS,
     periods_per_day: int = PERIODS_PER_DAY,
+    enforce_fixed: bool = True,
 ) -> list[int]:
     """Filter slot indices where teacher is available and course fits.
 
@@ -67,13 +68,14 @@ def get_eligible_slots(
     slot. All consecutive slots (start .. start + duration - 1) must be on the
     same day and the teacher must be available for every one of them.
 
-    If the course is fixed to a specific day/period, only that single slot is
-    returned (provided the teacher is available).
+    If the course is fixed to a specific day/period and enforce_fixed is True,
+    only that single slot is returned (provided the teacher is available).
+    For multi-session courses, enforce_fixed should be True only for session 0.
     """
     duration = course.session_duration_slots
 
     # If course is fixed, return only the fixed slot (if teacher available)
-    if course.is_fixed and course.fixed_day is not None and course.fixed_period is not None:
+    if enforce_fixed and course.is_fixed and course.fixed_day is not None and course.fixed_period is not None:
         day = course.fixed_day
         period = course.fixed_period
         available_periods = set(teacher.availability.get(day, []))

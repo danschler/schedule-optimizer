@@ -5,7 +5,7 @@ from collections import defaultdict
 import streamlit as st
 import plotly.graph_objects as go
 
-from src.models.time_slot import DAY_SHORT, PERIODS_PER_DAY, LUNCH_PERIOD
+from src.models.time_slot import DAY_SHORT, PERIOD_LABELS, PERIODS_PER_DAY, LUNCH_PERIOD
 from src.ui.components import build_lookup_maps
 
 st.title("Dashboard")

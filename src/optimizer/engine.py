@@ -152,7 +152,9 @@ class ScheduleOptimizer:
             )
             for session_idx in range(course.sessions_per_week):
                 for teacher in eligible_teachers:
-                    eligible_slots = get_eligible_slots(course, teacher)
+                    eligible_slots = get_eligible_slots(
+                        course, teacher, enforce_fixed=(session_idx == 0)
+                    )
                     for room in eligible_rooms:
                         for slot in eligible_slots:
                             key = (
